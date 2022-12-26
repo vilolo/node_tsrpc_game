@@ -1,0 +1,2 @@
+npx create-tsrpc-app@latest
+如报错，切换新淘宝源
