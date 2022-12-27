@@ -1,15 +1,22 @@
 import { ServiceProto } from 'tsrpc-proto';
 import { MsgChat } from './MsgChat';
+import { ReqLogin, ResLogin } from './PtlLogin';
 import { ReqSend, ResSend } from './PtlSend';
-
-// This is a demo service proto file (auto generated)
-// Feel free to delete it
+import { ReqTest, ResTest } from './PtlTest';
 
 export interface ServiceType {
     api: {
+        "Login": {
+            req: ReqLogin,
+            res: ResLogin
+        },
         "Send": {
             req: ReqSend,
             res: ResSend
+        },
+        "Test": {
+            req: ReqTest,
+            res: ResTest
         }
     },
     msg: {
@@ -18,6 +25,7 @@ export interface ServiceType {
 }
 
 export const serviceProto: ServiceProto<ServiceType> = {
+    "version": 2,
     "services": [
         {
             "id": 0,
@@ -25,9 +33,21 @@ export const serviceProto: ServiceProto<ServiceType> = {
             "type": "msg"
         },
         {
+            "id": 3,
+            "name": "Login",
+            "type": "api",
+            "conf": {}
+        },
+        {
             "id": 1,
             "name": "Send",
             "type": "api"
+        },
+        {
+            "id": 2,
+            "name": "Test",
+            "type": "api",
+            "conf": {}
         }
     ],
     "types": {
@@ -50,6 +70,78 @@ export const serviceProto: ServiceProto<ServiceType> = {
                 }
             ]
         },
+        "PtlLogin/ReqLogin": {
+            "type": "Interface",
+            "extends": [
+                {
+                    "id": 0,
+                    "type": {
+                        "type": "Reference",
+                        "target": "base/BaseRequest"
+                    }
+                }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "openid",
+                    "type": {
+                        "type": "String"
+                    }
+                },
+                {
+                    "id": 1,
+                    "name": "nickname",
+                    "type": {
+                        "type": "String"
+                    }
+                },
+                {
+                    "id": 2,
+                    "name": "avatar",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                }
+            ]
+        },
+        "base/BaseRequest": {
+            "type": "Interface"
+        },
+        "PtlLogin/ResLogin": {
+            "type": "Interface",
+            "extends": [
+                {
+                    "id": 0,
+                    "type": {
+                        "type": "Reference",
+                        "target": "base/BaseResponse"
+                    }
+                }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "user",
+                    "type": {
+                        "type": "Interface",
+                        "properties": [
+                            {
+                                "id": 0,
+                                "name": "uid",
+                                "type": {
+                                    "type": "Number"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "base/BaseResponse": {
+            "type": "Interface"
+        },
         "PtlSend/ReqSend": {
             "type": "Interface",
             "properties": [
@@ -70,6 +162,64 @@ export const serviceProto: ServiceProto<ServiceType> = {
                     "name": "time",
                     "type": {
                         "type": "Date"
+                    }
+                }
+            ]
+        },
+        "PtlTest/ReqTest": {
+            "type": "Interface",
+            "extends": [
+                {
+                    "id": 0,
+                    "type": {
+                        "type": "Reference",
+                        "target": "base/BaseRequest"
+                    }
+                }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "name",
+                    "type": {
+                        "type": "String"
+                    }
+                }
+            ]
+        },
+        "PtlTest/ResTest": {
+            "type": "Interface",
+            "extends": [
+                {
+                    "id": 0,
+                    "type": {
+                        "type": "Reference",
+                        "target": "base/BaseResponse"
+                    }
+                }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "user",
+                    "type": {
+                        "type": "Interface",
+                        "properties": [
+                            {
+                                "id": 0,
+                                "name": "id",
+                                "type": {
+                                    "type": "Number"
+                                }
+                            },
+                            {
+                                "id": 1,
+                                "name": "name",
+                                "type": {
+                                    "type": "String"
+                                }
+                            }
+                        ]
                     }
                 }
             ]
