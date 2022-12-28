@@ -1,6 +1,7 @@
 import * as path from "path";
-import { WsServer } from "tsrpc";
-import { serviceProto } from './shared/protocols/serviceProto';
+import { WsConnection, WsServer } from "tsrpc";
+import { Room } from "./models/Room";
+import { serviceProto, ServiceType } from './shared/protocols/serviceProto';
 
 // Create the Server
 export const server = new WsServer(serviceProto, {
@@ -8,6 +9,18 @@ export const server = new WsServer(serviceProto, {
     // Remove this to use binary mode (remove from the client too)
     json: true
 });
+
+// 断开连接后退出房间
+server.flows.postDisconnectFlow.push(v => {
+    let conn = v.conn as WsConnection<ServiceType>;
+    if (conn.openid) {
+        roomInstance.leave(conn.openid, conn);
+    }
+
+    return v;
+});
+
+export const roomInstance = new Room(server);
 
 // Initialize before server start
 async function init() {
