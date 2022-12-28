@@ -1,6 +1,7 @@
 import * as path from "path";
 import { WsConnection, WsServer } from "tsrpc";
 import { Room } from "./models/Room";
+import RoomManager from "./models/RoomManager";
 import { serviceProto, ServiceType } from './shared/protocols/serviceProto';
 
 // Create the Server
@@ -14,13 +15,15 @@ export const server = new WsServer(serviceProto, {
 server.flows.postDisconnectFlow.push(v => {
     let conn = v.conn as WsConnection<ServiceType>;
     if (conn.openid) {
-        roomInstance.leave(conn.openid, conn);
+        // roomInstance.leave(conn.openid, conn);
     }
 
     return v;
 });
 
-export const roomInstance = new Room(server);
+//多房间，先创一个房
+RoomManager.Instance.createRoom();
+RoomManager.Instance.createRoom();
 
 // Initialize before server start
 async function init() {

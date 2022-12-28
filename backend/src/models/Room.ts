@@ -1,23 +1,27 @@
-import { WsConnection, WsServer } from "tsrpc";
+import { TsrpcError, WsConnection, WsServer } from "tsrpc";
 import { gameConfig } from "../shared/game/gameConfig";
 import { GameSystem, GameSystemInput, PlayerJoin } from "../shared/game/GameSystem";
 import { ReqJoin } from "../shared/protocols/PtlJoin";
 import { ServiceType } from "../shared/protocols/serviceProto";
+import Player from "./Player";
+import PlayerManager from "./PlayerManager";
 
 export class Room{
+    id: number;
+    mapPlayers: Map<string,Player> = new Map();
+    
     // 帧同步频率，次数/秒
     syncRate = gameConfig.syncRate;
 
     gameSystem = new GameSystem();
 
-    server: WsServer<ServiceType>;
     conns: WsConnection<ServiceType>[] = [];
     pendingInputs: GameSystemInput[] = [];
     playerLastSn: { [openid: string]: number | undefined } = {};
     lastSyncTime?: number;
 
-    constructor(server: WsServer<ServiceType>) {
-        this.server = server;
+    constructor(rid: number) {
+        this.id = rid;
         setInterval(() => { this.sync() }, 1000 / this.syncRate);
     }
 
@@ -31,6 +35,12 @@ export class Room{
                 y: Math.random() * 10 - 5
             }
         }
+
+        let player = PlayerManager.Instance.getPlayerByOpendid(input.openid);
+        if(!player){
+            throw new TsrpcError('请先登录');
+        }
+
         this.applyInput(input);
         this.conns.push(conn);
         conn.openid = input.openid;
@@ -44,6 +54,7 @@ export class Room{
             })
         });
 
+        this.mapPlayers.set(input.openid, player);
         return input.openid;
     }
 
@@ -62,19 +73,22 @@ export class Room{
         });
 
         let now = process.uptime()*1000;
-        this.applyInput({
-            type: 'TimePast',
-            dt: now - (this.lastSyncTime ?? now)
-        });
+        // this.applyInput({
+        //     type: 'TimePast',
+        //     dt: now - (this.lastSyncTime ?? now)
+        // });
         this.lastSyncTime = now;
 
-        // 发送同步帧
-        this.conns.forEach(v => {
-            v.sendMsg('server/Frame', {
-                inputs: inputs,
-                lastSn: this.playerLastSn[v.openid!]
-            })
-        });
+        if(inputs.length > 0){
+            // 发送同步帧
+            this.conns.forEach(v => {
+                v.sendMsg('server/Frame', {
+                    inputs: inputs,
+                    lastSn: this.playerLastSn[v.openid!]
+                })
+            });
+        }
+        
     }
 
     /** 离开房间 */

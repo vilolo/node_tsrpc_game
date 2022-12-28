@@ -22,7 +22,7 @@ async function test(){
         console.error('连接失败', resConnect.errMsg);
     }
 
-    let openid = 'openid6666'
+    let openid = 'openid222'
 
     let ret = await client.callApi('Login', { 
         'openid':openid,
@@ -33,6 +33,7 @@ async function test(){
 
     //加入房间
     let bb = await client.callApi('Join', { 
+        'rid':1,
         'openid':openid
     });
     console.log("加入房间");

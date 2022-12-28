@@ -52,5 +52,8 @@ module.exports = {
             template: 'public/index.html'
         }),
     ],
-    devtool: isProduction ? false : 'inline-source-map'
+    devtool: isProduction ? false : 'inline-source-map',
+    devServer:{
+        port:8080
+    }
 }

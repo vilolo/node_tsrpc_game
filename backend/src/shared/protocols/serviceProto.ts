@@ -34,7 +34,7 @@ export interface ServiceType {
 }
 
 export const serviceProto: ServiceProto<ServiceType> = {
-    "version": 3,
+    "version": 4,
     "services": [
         {
             "id": 4,
@@ -181,6 +181,13 @@ export const serviceProto: ServiceProto<ServiceType> = {
             "type": "Interface",
             "properties": [
                 {
+                    "id": 1,
+                    "name": "rid",
+                    "type": {
+                        "type": "Number"
+                    }
+                },
+                {
                     "id": 0,
                     "name": "openid",
                     "type": {
@@ -192,13 +199,6 @@ export const serviceProto: ServiceProto<ServiceType> = {
         "PtlJoin/ResJoin": {
             "type": "Interface",
             "properties": [
-                {
-                    "id": 0,
-                    "name": "openid",
-                    "type": {
-                        "type": "String"
-                    }
-                },
                 {
                     "id": 1,
                     "name": "gameState",

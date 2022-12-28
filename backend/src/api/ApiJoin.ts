@@ -1,12 +1,14 @@
 import { ApiCallWs } from "tsrpc";
-import { roomInstance } from "..";
+import RoomManager from "../models/RoomManager";
 import { ReqJoin, ResJoin } from "../shared/protocols/PtlJoin";
 
 export default async function (call: ApiCallWs<ReqJoin, ResJoin>) {
-    let openid = roomInstance.join(call.req, call.conn);
-
-    call.succ({
-        openid: openid,
-        gameState: roomInstance.gameSystem.state
-    })
+    let room = RoomManager.Instance.joinRoom(call.req, call.conn);
+    if(room){
+        call.succ({
+            gameState: room.gameSystem.state
+        })
+    }else{
+        call.error("加入失败")
+    }
 }
