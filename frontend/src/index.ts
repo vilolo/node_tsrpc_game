@@ -3,15 +3,15 @@ import { Chatroom } from "./Chatroom";
 import { MsgClientInput } from "./shared/protocols/client/MsgClientInput";
 import { serviceProto } from "./shared/protocols/serviceProto";
 
-document.querySelectorAll('.chat-room').forEach(v => {
-    new Chatroom(v as HTMLDivElement);
-});
+// document.querySelectorAll('.chat-room').forEach(v => {
+//     new Chatroom(v as HTMLDivElement);
+// });
 
-export { };
+// export { };
 
 // == test ===
 const client = new WsClient(serviceProto, {
-    server: 'ws://127.0.0.1:3000',
+    server: 'ws://121.199.56.242:3001',
     json: true
 });
 
